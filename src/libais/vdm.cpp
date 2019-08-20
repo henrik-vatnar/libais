@@ -322,6 +322,12 @@ bool VdmStream::AddLine(const string &line) {
 
   // Convert multi-line message to single line.
   if (tot != 1) {
+
+    //somehow possible to get -1 sequence number from the create function
+    if (seq < 0) {
+      return false;
+    }
+
     int cnt = sentence->sentence_number();
 
     // Beginning of a message.
