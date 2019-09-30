@@ -513,8 +513,11 @@ Ais8_1_27::Ais8_1_27(const char *nmea_payload, const size_t pad)
   utc_hour = bits.ToUnsignedInt(83, 5);
   utc_min = bits.ToUnsignedInt(88, 6);
   duration = bits.ToUnsignedInt(94, 18);
-  // TODO(schwehr): manage the case where num_waypoints does not match
-  // const size_t num_waypoints_stated = bits.ToUnsignedInt(112, 5);
+  const size_t num_waypoints_stated = bits.ToUnsignedInt(112, 5);
+  if (num_waypoints_stated != num_waypoints) {
+      status = AIS_ERR_BAD_MSG_CONTENT;
+      return;
+  }
   for (size_t waypoint_num = 0; waypoint_num < num_waypoints; waypoint_num++) {
     const size_t start = 117 + 55*waypoint_num;
     waypoints.push_back(bits.ToAisPoint(start, 55));
