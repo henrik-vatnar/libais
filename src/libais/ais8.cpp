@@ -58,7 +58,7 @@ Ais8_1_0::Ais8_1_0(const char *nmea_payload, const size_t pad)
   if (!spare2_size)
     spare2 = 0;
   else
-    spare2 = bits.ToUnsignedInt(68, spare2_size);
+    spare2 = bits.ToUnsignedInt(68+text_size, spare2_size);
 
   assert(bits.GetRemaining() == 0);
   status = AIS_OK;
