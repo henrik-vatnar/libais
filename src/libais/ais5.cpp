@@ -12,7 +12,7 @@ Ais5::Ais5(const char *nmea_payload, const size_t pad)
   if (!CheckStatus()) {
     return;
   }
-  if (pad != 2 || num_chars != 71) {
+  if (num_chars != 71) {
     status = AIS_ERR_BAD_BIT_COUNT;
     return;
   }
