@@ -142,7 +142,7 @@ bool GetSentenceSequenceNumbers(const string & /* line */,
     }
   }
 
-  if (fields[4].size() != 1 || (fields[4][0] != 'A' && fields[4][0] != 'B')) {
+  if (fields[4].size() != 1 || (fields[4][0] != 'A' && fields[4][0] != 'B' && fields[4][0] != 'C' && fields[4][0] != 'D')) {
     return false;
   }
   *channel = fields[4][0];
