@@ -81,7 +81,7 @@ TEST(ValidateChecksumTest, TrySomeMessages) {
 #ifdef BENCHMARK
 static void BM_NmeaSentenceCreate(const int iters) {
   // clang-format off
-  const vector<string> lines = {
+  const vector<std::string> lines = {
       "Ignore garbage input.", "!SAVDM,1,1,,B,K8VSqb9LdU28WP8P,0*7B",
       "!SAVDM,2,1,0,A,53U1J>02=S95=Hhp000lTpE9H60PDhDp0000001IIhV="
       "M6ue0ED22C0A1C42,0*38"  // NOLINT
@@ -143,7 +143,7 @@ TEST(NmeaSentenceTest, ReturnNullptrOnJunk) {
 TEST(NmeaSentenceTest, SingleLines) {
   // Message 27 - Low bit count position report.
   int64_t line_number = 12;
-  string line("!SAVDM,1,1,,B,K8VSqb9LdU28WP8P,0*7B");
+  std::string line("!SAVDM,1,1,,B,K8VSqb9LdU28WP8P,0*7B");
   auto sentence = NmeaSentence::Create(line, line_number);
   ASSERT_NE(nullptr, sentence);
   EXPECT_EQ("SA", sentence->talker());
@@ -217,7 +217,7 @@ TEST(NmeaSentenceTest, SingleLines) {
 #ifdef BENCHMARK
 static void BM_NmeaSentenceMerge(const int iters) {
   // clang-format off
-  const vector<string> lines = {
+  const vector<std::string> lines = {
       "!SAVDM,2,1,1,A,54a=3b027kft?HISV20@thF0<u=@618T<6222216A0b<?4wk0BAm@F@"
       "DEBC8,0*17",  // NOLINT
       "!SAVDM,2,2,1,A,88888888880,2*3F"};
@@ -235,7 +235,7 @@ BENCHMARK(BM_NmeaSentenceMerge);
 
 TEST(NmeaSentenceTest, Merge) {
   // clang-format off
-  const vector<string> lines = {
+  const vector<std::string> lines = {
       "!SAVDM,2,1,1,A,54a=3b027kft?HISV20@thF0<u=@618T<6222216A0b<?4wk0BAm@F@"
       "DEBC8,0*17",  // NOLINT
       "!SAVDM,2,2,1,A,88888888880,2*3F"};
@@ -282,14 +282,14 @@ TEST(NmeaSentenceTest, VerifyInSameMessage) {
 
 #ifdef BENCHMARK
 static void BM_VdmStream(const int iters) {
-  const vector<string> single_line_messages = {
+  const vector<std::string> single_line_messages = {
       "!SAVDM,1,1,6,A,15N4uK0P00r<rW:BFp;JJgv`25k`,0*49",
       "!SAVDM,1,1,,A,29NS6m1000qE>9f@s=BES4M40@ET,0*53",
       "!AIVDM,1,1,,A,4030p:Autt01Dn`erRO<Wno00@<I,0*41",
       "!BSVDM,1,1,,A,B52HIjh00=ksdj6l448=wwQ5WP06,0*68",
       "!SAVDM,1,1,,B,K8VSqb9LdU28WP8d,0*4F"};
   // clang-format off
-  const vector<string> two_line_message = {
+  const vector<std::string> two_line_message = {
       "!SAVDM,2,1,1,A,54a=3b027kft?HISV20@thF0<u=@618T<6222216A0b<?4wk0BAm@F@"
       "DEBC8,0*17",  // NOLINT
       "!SAVDM,2,2,1,A,88888888880,2*3F"};
@@ -297,12 +297,12 @@ static void BM_VdmStream(const int iters) {
   VdmStream stream;
 
   for (int i = 0; i < iters; i++) {
-    for (const string &line : single_line_messages) {
+    for (const std::string &line : single_line_messages) {
       EXPECT_TRUE(stream.AddLine(line));
       ASSERT_NE(nullptr, stream.PopOldestMessage().get());
     }
 
-    for (const string &line : two_line_message) {
+    for (const std::string &line : two_line_message) {
       EXPECT_TRUE(stream.AddLine(line));
     }
     ASSERT_NE(nullptr, stream.PopOldestMessage().get());
@@ -318,7 +318,7 @@ class VdmTest : public ::testing::Test {
 
 TEST_F(VdmTest, IgnoreNonAisMessages) {
   // None of these are complete and valid VDM messages.
-  const vector<string> lines = {
+  const vector<std::string> lines = {
       "",
       "junk",
       "# comment",
@@ -328,7 +328,7 @@ TEST_F(VdmTest, IgnoreNonAisMessages) {
 
   ASSERT_EQ(nullptr, stream_.PopOldestMessage());
 
-  for (const string &line : lines) {
+  for (const std::string &line : lines) {
     EXPECT_FALSE(stream_.AddLine(line));
     EXPECT_EQ(nullptr, stream_.PopOldestMessage());
   }
@@ -359,7 +359,7 @@ TEST_F(VdmTest, QueueClean) {
 }
 
 TEST_F(VdmTest, MultipleSingleLineAisMessages) {
-  const vector<string> lines = {
+  const vector<std::string> lines = {
       "!SAVDM,1,1,6,A,15N4uK0P00r<rW:BFp;JJgv`25k`,0*49",
       "!SAVDM,1,1,,A,29NS6m1000qE>9f@s=BES4M40@ET,0*53",
       "!BSVDM,1,1,,B,36So=l5000o?uF0K>pnpV0Nf0000,0*57",
@@ -367,7 +367,7 @@ TEST_F(VdmTest, MultipleSingleLineAisMessages) {
       "!BSVDM,1,1,,A,B52HIjh00=ksdj6l448=wwQ5WP06,0*68",
       "!SAVDM,1,1,,B,K8VSqb9LdU28WP8d,0*4F"};
   ASSERT_EQ(nullptr, stream_.PopOldestMessage());
-  for (const string &line : lines) {
+  for (const std::string &line : lines) {
     EXPECT_TRUE(stream_.AddLine(line));
   }
 
@@ -411,9 +411,9 @@ TEST_F(VdmTest, MultipleSingleLineAisMessages) {
   ASSERT_EQ(27, ais_msg->message_id);
 }
 
-string RightStrip(const string &src) {
+std::string RightStrip(const std::string &src) {
   size_t pos = src.find_last_not_of(" \n\r\t");
-  if (string::npos == pos) {
+  if (std::string::npos == pos) {
     return src;
   }
   return src.substr(0, pos + 1);
@@ -421,7 +421,7 @@ string RightStrip(const string &src) {
 
 TEST_F(VdmTest, TwoLineAisMessage) {
   // clang-format off
-  const vector<string> lines = {
+  const vector<std::string> lines = {
       "!SAVDM,2,1,1,A,54a=3b027kft?HISV20@thF0<u=@618T<6222216A0b<?4wk0BAm@F@"
       "DEBC8,0*17",  // NOLINT
       "!SAVDM,2,2,1,A,88888888880,2*3F"};
@@ -447,7 +447,7 @@ TEST_F(VdmTest, TwoLineAisMessage) {
 
 TEST_F(VdmTest, ThreeLineAisMessage) {
   // clang-format off
-  const vector<string> lines = {
+  const vector<std::string> lines = {
       "!AIVDM,3,1,4,A,81mg=5@0EP:4R40807P>0<D1>MNt00000f>FNVfnw7>6>FNU=?"
       "B5PD5HDPD8,0*26",  // NOLINT
       "!AIVDM,3,2,4,A,1Dd2J09jL08JArJH5P=E<D9@<5P<9>0`bMl42Q0d2Pc2T59CPCE@@?"
@@ -455,7 +455,7 @@ TEST_F(VdmTest, ThreeLineAisMessage) {
       "!AIVDM,3,3,4,A,d0@d0IqhH:Pah:U54PD?75D85Bf00,0*03"};
   // clang-format off
 
-  for (const string &line : lines) {
+  for (const std::string &line : lines) {
     ASSERT_TRUE(stream_.AddLine(line));
   }
   auto ais_msg = stream_.PopOldestMessage();

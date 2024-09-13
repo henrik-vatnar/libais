@@ -1,6 +1,7 @@
-// Test parsing message 17 - GNSS boradcast.
+// Test parsing message 17 - GNSS broadcast.
 
 #include <memory>
+#include <string>
 
 #include "gtest/gtest.h"
 #include "ais.h"
@@ -8,8 +9,8 @@
 namespace libais {
 namespace {
 
-std::unique_ptr<Ais17> Init(const string &nmea_string) {
-  const string body(GetBody(nmea_string));
+std::unique_ptr<Ais17> Init(const std::string &nmea_string) {
+  const std::string body(GetBody(nmea_string));
   const int pad = GetPad(nmea_string);
 
   // TODO(schwehr): Switch to c++14 make_unique.
@@ -51,7 +52,6 @@ void Validate(
 }
 
 TEST(Ais17Test, DecodeAnything) {
-  // !SAVDO,1,1,,B,@03OwnQ9RgLP3h0000000000,0*32,b003669978,1426173689
   std::unique_ptr<Ais17> msg = Init(
       "!AIVDM,1,1,,A,A6WWW6gP00a3PDlEKLrarOwUr8Mg,0*03");
 

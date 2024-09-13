@@ -15,6 +15,7 @@
 // clang-format on
 
 #include <memory>
+#include <string>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -23,8 +24,8 @@
 namespace libais {
 namespace {
 
-std::unique_ptr<Ais8_367_22> Init(const string &nmea_string) {
-  const string body(GetBody(nmea_string));
+std::unique_ptr<Ais8_367_22> Init(const std::string &nmea_string) {
+  const std::string body(GetBody(nmea_string));
   const int pad = GetPad(nmea_string);
 
   // TODO(schwehr): Switch to c++14 make_unique.
@@ -97,7 +98,8 @@ TEST(Ais8_367_22Test, DecodeSingleTest) {
 
   ASSERT_EQ(AIS8_366_22_SHAPE_TEXT, msg->sub_areas[0]->getType());
 
-  Ais8_367_22_Text *text = dynamic_cast<Ais8_367_22_Text *>(msg->sub_areas[0]);
+  Ais8_367_22_Text *text =
+    dynamic_cast<Ais8_367_22_Text *>(msg->sub_areas[0].get());
 
   EXPECT_EQ("USCG-TEST@@@@@@", text->text);
   EXPECT_EQ(0, text->spare);
@@ -114,7 +116,7 @@ TEST(Ais8_367_22Test, DecodeUscgWhaleBouyTest) {
   ASSERT_EQ(AIS8_366_22_SHAPE_CIRCLE, msg->sub_areas[0]->getType());
 
   Ais8_367_22_Circle *circle =
-      dynamic_cast<Ais8_367_22_Circle *>(msg->sub_areas[0]);
+      dynamic_cast<Ais8_367_22_Circle *>(msg->sub_areas[0].get());
   EXPECT_NEAR(-70.1184, circle->position.lng_deg, 0.0001);
   EXPECT_NEAR(42.3113, circle->position.lat_deg, 0.0001);
   EXPECT_EQ(2, circle->precision);
@@ -139,10 +141,10 @@ TEST(Ais8_367_22Test, PolylinesTest) {
   ASSERT_EQ(AIS8_366_22_SHAPE_POLYLINE, msg->sub_areas[1]->getType());
   ASSERT_EQ(AIS8_366_22_SHAPE_POLYLINE, msg->sub_areas[2]->getType());
 
-  ValidateCircle(msg->sub_areas[0], {-175.829, 59.3672}, 4, 0, 0);
-  ValidatePoly(msg->sub_areas[1], AIS8_366_22_SHAPE_POLYLINE,
+  ValidateCircle(msg->sub_areas[0].get(), {-175.829, 59.3672}, 4, 0, 0);
+  ValidatePoly(msg->sub_areas[1].get(), AIS8_366_22_SHAPE_POLYLINE,
                {225, 230, 265, 315}, {13000, 27300, 17400, 17200}, 0);
-  ValidatePoly(msg->sub_areas[2], AIS8_366_22_SHAPE_POLYLINE, {291, 263, 279},
+  ValidatePoly(msg->sub_areas[2].get(), AIS8_366_22_SHAPE_POLYLINE, {291, 263, 279},
                {19200, 24000, 24700}, 0);
 }
 
@@ -177,6 +179,253 @@ TEST(Ais8_367_22Test, DecodeUscgWhaleBouyTest2) {
   EXPECT_EQ(0, circle->spare);
 }
 #endif
+
+std::unique_ptr<Ais8_367_23> Init_23(const string &nmea_string) {
+  const string body(GetBody(nmea_string));
+  const int pad = GetPad(nmea_string);
+
+  // TODO(schwehr): Switch to c++14 make_unique.
+  std::unique_ptr<Ais8_367_23> msg(new Ais8_367_23(body.c_str(), pad));
+  if (!msg || msg->had_error()) {
+    return nullptr;
+  }
+
+  return msg;
+}
+
+TEST(Ais8_367_23Test, DecodeSingleTest_23) {
+  std::unique_ptr<Ais8_367_23> msg =
+      Init_23("!SAVDM,1,1,7,A,85Oqf`1Kmh37VDgTDMsgo9@0uNc@,0*47");
+
+  ASSERT_EQ(8, msg->message_id);
+  ASSERT_EQ(0, msg->repeat_indicator);
+  ASSERT_EQ(368996000, msg->mmsi);
+  ASSERT_EQ(0, msg->spare);
+  ASSERT_EQ(367, msg->dac);
+  ASSERT_EQ(23, msg->fi);
+
+  ASSERT_EQ(0, msg->version);
+  ASSERT_EQ(0, msg->utc_day);
+  ASSERT_EQ(24, msg->utc_hour);
+  ASSERT_EQ(60, msg->utc_min);
+  EXPECT_NEAR(msg->position.lng_deg, -117.15298333333334, 0.001);
+  EXPECT_NEAR(msg->position.lat_deg, 32.69541666666667, 0.001);
+  ASSERT_EQ(1201, msg->pressure);
+
+  ASSERT_EQ(-1024, msg->air_temp_raw);
+  EXPECT_NEAR(msg->air_temp, -102.4, 0.001);
+
+  ASSERT_EQ(122, msg->wind_speed);
+  ASSERT_EQ(122, msg->wind_gust);
+  ASSERT_EQ(360, msg->wind_dir);
+
+  ASSERT_EQ(0, msg->spare2);
+}
+
+std::unique_ptr<Ais8_367_24> Init_24(const string &nmea_string) {
+  const string body(GetBody(nmea_string));
+  const int pad = GetPad(nmea_string);
+
+  // TODO(schwehr): Switch to c++14 make_unique.
+  std::unique_ptr<Ais8_367_24> msg(new Ais8_367_24(body.c_str(), pad));
+  if (!msg || msg->had_error()) {
+    return nullptr;
+  }
+
+  return msg;
+}
+
+TEST(Ais8_367_24Test, DecodeSingleTest_24) {
+  std::unique_ptr<Ais8_367_24> msg =
+      Init_24("!AIVDM,1,1,,,85MU:l1Kn12FsqBb>Kh@p0,4*4E");
+
+  ASSERT_EQ(8, msg->message_id);
+  ASSERT_EQ(0, msg->repeat_indicator);
+  ASSERT_EQ(366562000, msg->mmsi);
+  ASSERT_EQ(0, msg->spare);
+  ASSERT_EQ(367, msg->dac);
+  ASSERT_EQ(24, msg->fi);
+
+  ASSERT_EQ(0, msg->version);
+  ASSERT_EQ(16, msg->utc_hour);
+  ASSERT_EQ(37, msg->utc_min);
+  EXPECT_NEAR(msg->position.lng_deg, -148.77725, 0.001);
+  EXPECT_NEAR(msg->position.lat_deg, 31.5308, 0.001);
+
+  ASSERT_EQ(1023, msg->pressure);
+}
+
+std::unique_ptr<Ais8_367_25> Init_25(const string &nmea_string) {
+  const string body(GetBody(nmea_string));
+  const int pad = GetPad(nmea_string);
+
+  // TODO(schwehr): Switch to c++14 make_unique.
+  std::unique_ptr<Ais8_367_25> msg(new Ais8_367_25(body.c_str(), pad));
+  if (!msg || msg->had_error()) {
+    return nullptr;
+  }
+
+  return msg;
+}
+
+TEST(Ais8_367_25Test, DecodeSingleTest_25) {
+  std::unique_ptr<Ais8_367_25> msg =
+      Init_25("!SAVDM,1,1,7,A,85MrbQ1KnA5IdV24,0*17");
+
+  ASSERT_EQ(8, msg->message_id);
+  ASSERT_EQ(0, msg->repeat_indicator);
+  ASSERT_EQ(366914180, msg->mmsi);
+  ASSERT_EQ(0, msg->spare);
+  ASSERT_EQ(367, msg->dac);
+  ASSERT_EQ(25, msg->fi);
+
+  ASSERT_EQ(0, msg->version);
+  ASSERT_EQ(17, msg->utc_hour);
+  ASSERT_EQ(22, msg->utc_min);
+
+  ASSERT_EQ(1016, msg->pressure);
+  ASSERT_EQ(24, msg->wind_speed);
+  ASSERT_EQ(66, msg->wind_dir);
+}
+
+std::unique_ptr<Ais8_367_33> Init_33(const string &nmea_string) {
+  const string body(GetBody(nmea_string));
+  const int pad = GetPad(nmea_string);
+
+  std::unique_ptr<Ais8_367_33> msg(new Ais8_367_33(body.c_str(), pad));
+  if (!msg || msg->had_error()) {
+    return nullptr;
+  }
+
+  return msg;
+}
+
+TEST(Ais8_367_33Test, DecodeSingleTest_33) {
+  std::unique_ptr<Ais8_367_33> msg =
+      Init_33("!AIVDM,1,1,,B,8>k1oFAKpB95?AruFRl7mre0<N00,0*6A");
+
+  ASSERT_NE(nullptr, msg);
+
+  ASSERT_EQ(8, msg->message_id);
+  ASSERT_EQ(0, msg->repeat_indicator);
+  ASSERT_EQ(993032025, msg->mmsi);
+  ASSERT_EQ(0, msg->spare);
+  ASSERT_EQ(367, msg->dac);
+  ASSERT_EQ(33, msg->fi);
+
+  ASSERT_EQ(1, msg->reports.size());
+
+  ASSERT_EQ(AIS8_367_33_SENSOR_WIND, msg->reports[0]->getType());
+
+  Ais8_367_33_Wind *wind =
+    dynamic_cast<Ais8_367_33_Wind *>(msg->reports[0].get());
+
+  EXPECT_EQ(4, wind->utc_day);
+  EXPECT_EQ(17, wind->utc_hr);
+  EXPECT_EQ(19, wind->utc_min);
+  EXPECT_EQ(104, wind->site_id);
+
+  EXPECT_EQ(122, wind->wind_speed);
+  EXPECT_EQ(122, wind->wind_gust);
+  EXPECT_EQ(360, wind->wind_dir);
+
+  EXPECT_EQ(1, wind->sensor_type);
+
+  EXPECT_EQ(122, wind->wind_forecast);
+  EXPECT_EQ(122, wind->wind_gust_forecast);
+  EXPECT_EQ(360, wind->wind_dir_forecast);
+
+  EXPECT_EQ(0, wind->utc_day_forecast);
+  EXPECT_EQ(24, wind->utc_hour_forecast);
+  EXPECT_EQ(60, wind->utc_min_forecast);
+
+  ASSERT_EQ(0, wind->duration);
+  EXPECT_EQ(0, wind->spare2);
+}
+
+TEST(Ais8_367_33Test, DecodeSingleTest_1_33) {
+  std::unique_ptr<Ais8_367_33> msg =
+      Init_33("!AIVDM,2,1,6,,85362R1Kp@HpL07cebNpkUqR`O`0USQh17CvENUfI6@0002n>703wA937cmJ<N0000,4*54");
+
+  ASSERT_NE(nullptr, msg);
+
+  ASSERT_EQ(8, msg->message_id);
+  ASSERT_EQ(0, msg->repeat_indicator);
+  ASSERT_EQ(338789000, msg->mmsi);
+  ASSERT_EQ(0, msg->spare);
+  ASSERT_EQ(367, msg->dac);
+  ASSERT_EQ(33, msg->fi);
+
+  ASSERT_EQ(3, msg->reports.size());
+
+  // Location
+  ASSERT_EQ(AIS8_367_33_SENSOR_LOCATION, msg->reports[0]->getType());
+
+  Ais8_367_33_Location *loc =
+    dynamic_cast<Ais8_367_33_Location *>(msg->reports[0].get());
+
+  EXPECT_EQ(12, loc->utc_day);
+  EXPECT_EQ(14, loc->utc_hr);
+  EXPECT_EQ(7, loc->utc_min);
+  EXPECT_EQ(0, loc->site_id);
+
+  EXPECT_EQ(3, loc->version);
+
+  EXPECT_NEAR(loc->position.lng_deg, -70.9065, 0.0001);
+  EXPECT_NEAR(loc->position.lat_deg, 22.541, 0.0001);
+
+  EXPECT_EQ(5, loc->precision);
+  EXPECT_NEAR(loc->altitude, 25.3, 0.001);
+  EXPECT_EQ(0, loc->owner);
+  EXPECT_EQ(0, loc->spare2);
+
+  // Weather
+  ASSERT_EQ(AIS8_367_33_SENSOR_WX, msg->reports[1]->getType());
+
+  Ais8_367_33_Wx *wx =
+    dynamic_cast<Ais8_367_33_Wx *>(msg->reports[1].get());
+
+  EXPECT_EQ(12, wx->utc_day);
+  EXPECT_EQ(14, wx->utc_hr);
+  EXPECT_EQ(7, wx->utc_min);
+  EXPECT_EQ(0, wx->site_id);
+
+  EXPECT_NEAR(wx->air_temp, 28.5, 0.001);
+  EXPECT_EQ(1, wx->air_temp_sensor_type);
+  EXPECT_EQ(3, wx->precip);
+  EXPECT_NEAR(wx->horz_vis, 24.2, 0.001);
+  EXPECT_NEAR(wx->dew_point, 50.1, 0.001);
+  EXPECT_EQ(1, wx->dew_point_type);
+  EXPECT_EQ(1019, wx->air_pressure);
+  EXPECT_EQ(3, wx->air_pressure_trend);
+  EXPECT_EQ(1, wx->air_pressure_sensor_type);
+  EXPECT_NEAR(wx->salinity, 5.0, 0.001);
+  EXPECT_EQ(0, wx->spare2);
+
+  // Wind Report (V2)
+  ASSERT_EQ(AIS8_367_33_SENSOR_WIND_REPORT_2, msg->reports[2]->getType());
+
+  Ais8_367_33_Wind_V2 *wind_v2 =
+    dynamic_cast<Ais8_367_33_Wind_V2 *>(msg->reports[2].get());
+
+  EXPECT_EQ(12, wind_v2->utc_day);
+  EXPECT_EQ(14, wind_v2->utc_hr);
+  EXPECT_EQ(7, wind_v2->utc_min);
+  EXPECT_EQ(0, wind_v2->site_id);
+
+  EXPECT_EQ(15, wind_v2->wind_speed);
+  EXPECT_EQ(122, wind_v2->wind_gust);
+  EXPECT_EQ(73, wind_v2->wind_dir);
+  EXPECT_EQ(3, wind_v2->averaging_time);
+  EXPECT_EQ(0, wind_v2->sensor_type);
+  EXPECT_EQ(122, wind_v2->wind_speed_forecast);
+  EXPECT_EQ(122, wind_v2->wind_gust_forecast);
+  EXPECT_EQ(360, wind_v2->wind_dir_forecast);
+  EXPECT_EQ(24, wind_v2->utc_hour_forecast);
+  EXPECT_EQ(60, wind_v2->utc_min_forecast);
+  EXPECT_EQ(0, wind_v2->duration);
+  EXPECT_EQ(0, wind_v2->spare2);
+}
 
 }  // namespace
 }  // namespace libais

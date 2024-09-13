@@ -1,5 +1,6 @@
 // TODO(schwehr): check for reference counting leaks
 // TODO(schwehr): better error handling for all messages
+#include <string>
 
 #include <Python.h>
 
@@ -61,68 +62,59 @@ enum AIS_FI {
   AIS_FI_8_200_55_RIS_PERSONS_ON_BOARD = 50,
   AIS_FI_8_366_22_AREA_NOTICE = 22,  // USCG.
   AIS_FI_8_367_22_AREA_NOTICE = 22,  // USCG.
+  AIS_FI_8_367_23_SSW = 23,  // USCG Satellite Ship Weather
+  AIS_FI_8_367_24_SSW_SMALL = 24,  // USCG Satellite Ship Weather Small
+  AIS_FI_8_367_25_SSW_TINY = 25,  // USCG Satellite Ship Weather Tiny
+  AIS_FI_8_367_33_ENVIRONMENTAL = 33, // Environmental Message
 };
 
 void
-DictSafeSetItem(PyObject *dict, const string &key, const long val) {  // NOLINT
-  PyObject *key_obj = PyUnicode_FromString(key.c_str());
+DictSafeSetItem(
+    PyObject *dict, const std::string &key, const long val) {  // NOLINT
   PyObject *val_obj = PyLong_FromLong(val);
-  assert(key_obj);
   assert(val_obj);
-  PyDict_SetItem(dict, key_obj, val_obj);
-  Py_DECREF(key_obj);
+  PyDict_SetItemString(dict, key.c_str(), val_obj);
   Py_DECREF(val_obj);
 }
 
 void
-DictSafeSetItem(PyObject *dict, const string &key, const int val) {
-  PyObject *key_obj = PyUnicode_FromString(key.c_str());
+DictSafeSetItem(PyObject *dict, const std::string &key, const int val) {
   PyObject *val_obj = PyLong_FromLong(val);
-  assert(key_obj);
   assert(val_obj);
-  PyDict_SetItem(dict, key_obj, val_obj);
-  Py_DECREF(key_obj);
+  PyDict_SetItemString(dict, key.c_str(), val_obj);
   Py_DECREF(val_obj);
 }
 
 void
-DictSafeSetItem(PyObject *dict, const string &key, const unsigned int val) {
-  PyObject *key_obj = PyUnicode_FromString(key.c_str());
+DictSafeSetItem(
+    PyObject *dict, const std::string &key, const unsigned int val) {
   PyObject *val_obj = PyLong_FromLong(val);
-  assert(key_obj);
   assert(val_obj);
-  PyDict_SetItem(dict, key_obj, val_obj);
-  Py_DECREF(key_obj);
+  PyDict_SetItemString(dict, key.c_str(), val_obj);
   Py_DECREF(val_obj);
 }
 
 void
-DictSafeSetItem(PyObject *dict, const string &key, const string &val) {
-  PyObject *key_obj = PyUnicode_FromString(key.c_str());
+DictSafeSetItem(PyObject *dict, const std::string &key, const string &val) {
   PyObject *val_obj = PyUnicode_FromString(val.c_str());
-  assert(key_obj);
   assert(val_obj);
-  PyDict_SetItem(dict, key_obj, val_obj);
-  Py_DECREF(key_obj);
+  PyDict_SetItemString(dict, key.c_str(), val_obj);
   Py_DECREF(val_obj);
 }
 
 
 void
-DictSafeSetItem(PyObject *dict, const string &key, const char *val) {
-  PyObject *key_obj = PyUnicode_FromString(key.c_str());
+DictSafeSetItem(PyObject *dict, const std::string &key, const char *val) {
   PyObject *val_obj = PyUnicode_FromString(val);
-  assert(key_obj);
   assert(val_obj);
-  PyDict_SetItem(dict, key_obj, val_obj);
-  Py_DECREF(key_obj);
+  PyDict_SetItemString(dict, key.c_str(), val_obj);
   Py_DECREF(val_obj);
 }
 
 
 #if 0
 void
-DictSafeSetItem(PyObject *dict, const string &key, const bool val) {
+DictSafeSetItem(PyObject *dict, const std::string &key, const bool val) {
   PyObject *key_obj = PyUnicode_FromString(key.c_str());
   PyObject *val_obj = PyBool_FromLong(val);
   assert(key_obj);
@@ -133,57 +125,45 @@ DictSafeSetItem(PyObject *dict, const string &key, const bool val) {
 }
 #else
 void
-DictSafeSetItem(PyObject *dict, const string &key, const bool val) {
-  PyObject *key_obj = PyUnicode_FromString(key.c_str());
-  assert(key_obj);
+DictSafeSetItem(PyObject *dict, const std::string &key, const bool val) {
   if (val) {
-    PyDict_SetItem(dict, key_obj, Py_True);
+    PyDict_SetItemString(dict, key.c_str(), Py_True);
   } else {
-    PyDict_SetItem(dict, key_obj, Py_False);
+    PyDict_SetItemString(dict, key.c_str(), Py_False);
   }
-  Py_DECREF(key_obj);
 }
 #endif
 
 void
-DictSafeSetItem(PyObject *dict, const string &key, const float val) {
-  PyObject *key_obj = PyUnicode_FromString(key.c_str());
+DictSafeSetItem(PyObject *dict, const std::string &key, const float val) {
   PyObject *val_obj = PyFloat_FromDouble(val);
-  assert(key_obj);
   assert(val_obj);
-  PyDict_SetItem(dict, key_obj, val_obj);
-  Py_DECREF(key_obj);
+  PyDict_SetItemString(dict, key.c_str(), val_obj);
   Py_DECREF(val_obj);
 }
 
 // Python Floats are IEE-754 double precision.
 void
-DictSafeSetItem(PyObject *dict, const string &key, const double val) {
-  PyObject *key_obj = PyUnicode_FromString(key.c_str());
+DictSafeSetItem(PyObject *dict, const std::string &key, const double val) {
   PyObject *val_obj = PyFloat_FromDouble(val);
-  assert(key_obj);
   assert(val_obj);
-  PyDict_SetItem(dict, key_obj, val_obj);
-  Py_DECREF(key_obj);
+  PyDict_SetItemString(dict, key.c_str(), val_obj);
   Py_DECREF(val_obj);
 }
 
 void
-DictSafeSetItem(PyObject *dict, const string &x_key, const string& y_key,
+DictSafeSetItem(PyObject *dict, const std::string &x_key, const string& y_key,
                 const AisPoint& position) {
   DictSafeSetItem(dict, x_key, position.lng_deg);
   DictSafeSetItem(dict, y_key, position.lat_deg);
 }
 
 void
-DictSafeSetItem(PyObject *dict, const string &key, PyObject *val_obj) {
+DictSafeSetItem(PyObject *dict, const std::string &key, PyObject *val_obj) {
   // When we need to add dictionaries and such to a dictionary
   assert(dict);
   assert(val_obj);
-  PyObject *key_obj = PyUnicode_FromString(key.c_str());
-  assert(key_obj);
-  PyDict_SetItem(dict, key_obj, val_obj);
-  Py_DECREF(key_obj);
+  PyDict_SetItemString(dict, key.c_str(), val_obj);
 }
 
 
@@ -437,7 +417,6 @@ ais6_1_4_append_pydict(const char *nmea_payload, PyObject *dict,
   PyObject *cap_list = PyList_New(kNumFI);
   PyObject *res_list = PyList_New(kNumFI);
   for (size_t cap_num = 0; cap_num < kNumFI; cap_num++) {
-    // TODO(schwehr): memory leak?
     PyObject *cap = PyLong_FromLong(long(msg.capabilities[cap_num]));  // NOLINT
     PyList_SetItem(cap_list, cap_num, cap);
 
@@ -445,7 +424,9 @@ ais6_1_4_append_pydict(const char *nmea_payload, PyObject *dict,
     PyList_SetItem(res_list, cap_num, res);
   }
   DictSafeSetItem(dict, "capabilities", cap_list);
+  Py_DECREF(cap_list);
   DictSafeSetItem(dict, "cap_reserved", res_list);
+  Py_DECREF(res_list);
   DictSafeSetItem(dict, "spare2", msg.spare2);
   DictSafeSetItem(dict, "spare3", msg.spare2);
   DictSafeSetItem(dict, "spare4", msg.spare2);
@@ -536,7 +517,8 @@ ais6_1_14_append_pydict(const char *nmea_payload, PyObject *dict,
     DictSafeSetItem(window, "cur_speed", msg.windows[w_num].cur_speed);
     PyList_SetItem(window_list, w_num, window);
   }
-  PyDict_SetItem(dict, PyUnicode_FromString("windows"), window_list);
+  PyDict_SetItemString(dict, "windows", window_list);
+  Py_DECREF(window_list);
 
   return AIS_OK;
 }
@@ -596,6 +578,7 @@ ais6_1_20_append_pydict(const char *nmea_payload, PyObject *dict,
       PyList_SetItem(serv_list, serv_num, serv);
     }
     DictSafeSetItem(dict, "services", serv_list);
+    Py_DECREF(serv_list);
   }
   DictSafeSetItem(dict, "name", msg.name);
   DictSafeSetItem(dict, "x", "y", msg.position);
@@ -639,7 +622,8 @@ ais6_1_25_append_pydict(const char *nmea_payload, PyObject *dict,
       DictSafeSetItem(cargo, "marpol_cat", msg.cargos[cargo_num].marpol_cat);
     PyList_SetItem(cargo_list, cargo_num, cargo);
   }
-  PyDict_SetItem(dict, PyUnicode_FromString("cargos"), cargo_list);
+  PyDict_SetItemString(dict, "cargos", cargo_list);
+  Py_DECREF(cargo_list);
 
   return AIS_OK;
 }
@@ -677,7 +661,8 @@ ais6_1_32_append_pydict(const char *nmea_payload, PyObject *dict,
     DictSafeSetItem(win, "cur_speed", msg.windows[win_num].cur_speed);
     PyList_SetItem(window_list, win_num, win);
   }
-  PyDict_SetItem(dict, PyUnicode_FromString("windows"), window_list);
+  PyDict_SetItemString(dict, "windows", window_list);
+  Py_DECREF(window_list);
 
   return AIS_OK;
 }
@@ -777,6 +762,7 @@ ais6_to_pydict(const char *nmea_payload, const size_t pad) {
   }
 
   if (status != AIS_OK) {
+    Py_DECREF(dict);
     PyErr_Format(ais_py_exception,
                  "Ais6: DAC:FI not known.  6:%d:%d %s",
                  msg.dac,
@@ -808,7 +794,7 @@ ais7_13_to_pydict(const char *nmea_payload, const size_t pad) {
     PyTuple_SetItem(tuple, 1, PyLong_FromLong(msg.seq_num[i]));  // Steals ref
     PyList_SetItem(list, i, tuple);  // Steals ref
   }
-  PyDict_SetItem(dict, PyUnicode_FromString("acks"), list);
+  PyDict_SetItemString(dict, "acks", list);
   Py_DECREF(list);
   return dict;
 }
@@ -983,7 +969,8 @@ ais8_1_17_append_pydict(const char *nmea_payload, PyObject *dict,
     DictSafeSetItem(target, "sog", msg.targets[target_num].sog);
     PyList_SetItem(target_list, target_num, target);
   }
-  PyDict_SetItem(dict, PyUnicode_FromString("targets"), target_list);
+  PyDict_SetItemString(dict, "targets", target_list);
+  Py_DECREF(target_list);
 
   return AIS_OK;
 }
@@ -1134,7 +1121,8 @@ ais8_1_22_append_pydict(const char *nmea_payload, PyObject *dict,
       {
         PyObject *sub_area = PyDict_New();
         Ais8_1_22_Circle *c =
-            reinterpret_cast<Ais8_1_22_Circle*>(msg.sub_areas[i]);
+            dynamic_cast<Ais8_1_22_Circle*>(msg.sub_areas[i].get());
+        assert(c != nullptr);
 
         DictSafeSetItem(sub_area, "sub_area_type", AIS8_1_22_SHAPE_CIRCLE);
         if (c->radius_m == 0)
@@ -1153,7 +1141,8 @@ ais8_1_22_append_pydict(const char *nmea_payload, PyObject *dict,
       {
         PyObject *sub_area = PyDict_New();
         Ais8_1_22_Rect *c =
-            reinterpret_cast<Ais8_1_22_Rect*>(msg.sub_areas[i]);
+            dynamic_cast<Ais8_1_22_Rect*>(msg.sub_areas[i].get());
+        assert(c != nullptr);
 
         DictSafeSetItem(sub_area, "sub_area_type", AIS8_1_22_SHAPE_RECT);
         DictSafeSetItem(sub_area, "sub_area_type_str", "rect");
@@ -1171,7 +1160,8 @@ ais8_1_22_append_pydict(const char *nmea_payload, PyObject *dict,
       {
         PyObject *sub_area = PyDict_New();
         Ais8_1_22_Sector *c =
-            reinterpret_cast<Ais8_1_22_Sector*>(msg.sub_areas[i]);
+            dynamic_cast<Ais8_1_22_Sector*>(msg.sub_areas[i].get());
+        assert(c != nullptr);
 
         DictSafeSetItem(sub_area, "sub_area_type", AIS8_1_22_SHAPE_SECTOR);
         DictSafeSetItem(sub_area, "sub_area_type_str", "sector");
@@ -1189,7 +1179,8 @@ ais8_1_22_append_pydict(const char *nmea_payload, PyObject *dict,
       {
         PyObject *sub_area = PyDict_New();
         Ais8_1_22_Polyline *polyline =
-            reinterpret_cast<Ais8_1_22_Polyline*>(msg.sub_areas[i]);
+            dynamic_cast<Ais8_1_22_Polyline*>(msg.sub_areas[i].get());
+        assert(polyline != nullptr);
 
         DictSafeSetItem(sub_area, "sub_area_type", AIS8_1_22_SHAPE_POLYLINE);
         DictSafeSetItem(sub_area, "sub_area_type_str", "polyline");
@@ -1206,6 +1197,8 @@ ais8_1_22_append_pydict(const char *nmea_payload, PyObject *dict,
 
         DictSafeSetItem(sub_area, "angles", angle_list);
         DictSafeSetItem(sub_area, "dists_m", dist_list);
+        Py_DECREF(angle_list);
+        Py_DECREF(dist_list);
 
         // TODO(schwehr): spare?
         PyList_SetItem(sub_area_list, i, sub_area);
@@ -1215,7 +1208,8 @@ ais8_1_22_append_pydict(const char *nmea_payload, PyObject *dict,
       {
         PyObject *sub_area = PyDict_New();
         Ais8_1_22_Polygon *polygon =
-            reinterpret_cast<Ais8_1_22_Polygon*>(msg.sub_areas[i]);
+            dynamic_cast<Ais8_1_22_Polygon*>(msg.sub_areas[i].get());
+        assert(polygon != nullptr);
 
         DictSafeSetItem(sub_area, "sub_area_type", AIS8_1_22_SHAPE_POLYGON);
         DictSafeSetItem(sub_area, "sub_area_type_str", "polygon");
@@ -1232,6 +1226,8 @@ ais8_1_22_append_pydict(const char *nmea_payload, PyObject *dict,
 
         DictSafeSetItem(sub_area, "angles", angle_list);
         DictSafeSetItem(sub_area, "dists_m", dist_list);
+        Py_DECREF(angle_list);
+        Py_DECREF(dist_list);
 
         // TODO(schwehr): spare?
         PyList_SetItem(sub_area_list, i, sub_area);
@@ -1242,7 +1238,9 @@ ais8_1_22_append_pydict(const char *nmea_payload, PyObject *dict,
         PyObject *sub_area = PyDict_New();
 
         Ais8_1_22_Text *text =
-            reinterpret_cast<Ais8_1_22_Text*>(msg.sub_areas[i]);
+            dynamic_cast<Ais8_1_22_Text*>(msg.sub_areas[i].get());
+        assert(text != nullptr);
+
         DictSafeSetItem(sub_area, "sub_area_type", AIS8_1_22_SHAPE_TEXT);
         DictSafeSetItem(sub_area, "sub_area_type_str", "text");
 
@@ -1256,6 +1254,7 @@ ais8_1_22_append_pydict(const char *nmea_payload, PyObject *dict,
     }
   }
   DictSafeSetItem(dict, "sub_areas", sub_area_list);
+  Py_DECREF(sub_area_list);
 
   return AIS_OK;
 }
@@ -1280,17 +1279,18 @@ ais8_1_24_append_pydict(const char *nmea_payload, PyObject *dict,
   DictSafeSetItem(dict, "last_port", msg.last_port);
 
   PyObject *port_list = PyList_New(2);
-  PyObject *port0 = PyUnicode_FromString(msg.next_ports[0].c_str());
-  PyObject *port1 = PyUnicode_FromString(msg.next_ports[0].c_str());
-  PyList_SetItem(port_list, 0, port0); Py_DECREF(port0);
-  PyList_SetItem(port_list, 1, port1); Py_DECREF(port1);
+  PyList_SetItem(port_list, 0, PyUnicode_FromString(msg.next_ports[0].c_str()));
+  PyList_SetItem(port_list, 1, PyUnicode_FromString(msg.next_ports[0].c_str()));
 
   PyObject *solas_list = PyList_New(26);
   for (size_t solas_num = 0; solas_num < 26; solas_num++) {
     PyObject *solas = PyLong_FromLong(msg.solas_status[solas_num]);
     PyList_SetItem(solas_list, solas_num, solas);
   }
+  DictSafeSetItem(dict, "port_list", port_list);
+  Py_DECREF(port_list);
   DictSafeSetItem(dict, "solas", solas_list);
+  Py_DECREF(solas_list);
   DictSafeSetItem(dict, "ice_class", msg.ice_class);
   DictSafeSetItem(dict, "shaft_power", msg.shaft_power);
   DictSafeSetItem(dict, "vhf", msg.vhf);
@@ -1420,6 +1420,7 @@ ais8_1_26_append_pydict(const char *nmea_payload, PyObject *dict,
           DictSafeSetItem(curr_dict, "depth", rpt->currents[idx].depth);
           PyList_SetItem(curr_list, idx, curr_dict);
         }
+        Py_DECREF(curr_list);
       }
       break;
     case AIS8_1_26_SENSOR_CURR_3D:
@@ -1440,6 +1441,7 @@ ais8_1_26_append_pydict(const char *nmea_payload, PyObject *dict,
           DictSafeSetItem(curr_dict, "up", rpt->currents[idx].up);
           DictSafeSetItem(curr_dict, "depth", rpt->currents[idx].depth);
         }
+        Py_DECREF(curr_list);
       }
       break;
     case AIS8_1_26_SENSOR_HORZ_FLOW:
@@ -1459,6 +1461,7 @@ ais8_1_26_append_pydict(const char *nmea_payload, PyObject *dict,
           DictSafeSetItem(curr_dict, "dir", rpt->currents[idx].dir);
           DictSafeSetItem(curr_dict, "level", rpt->currents[idx].level);
         }
+        Py_DECREF(curr_list);
       }
       break;
     case AIS8_1_26_SENSOR_SEA_STATE:
@@ -1537,6 +1540,7 @@ ais8_1_26_append_pydict(const char *nmea_payload, PyObject *dict,
       {}  // TODO(schwehr): mark a bad sensor type or raise exception
     }
   }
+  Py_DECREF(rpt_list);
 
   return AIS_OK;
 }
@@ -1573,7 +1577,8 @@ ais8_1_27_append_pydict(const char *nmea_payload, PyObject *dict,
         waypoint, 1, PyFloat_FromDouble(msg.waypoints[point_num].lat_deg));
     PyList_SetItem(waypoint_list, point_num, waypoint);
   }
-  PyDict_SetItem(dict, PyUnicode_FromString("waypoints"), waypoint_list);
+  PyDict_SetItemString(dict, "waypoints", waypoint_list);
+  Py_DECREF(waypoint_list);
 
   return AIS_OK;
 }
@@ -1799,11 +1804,13 @@ ais8_200_24_append_pydict(const char *nmea_payload, PyObject *dict,
   for (size_t i = 0; i < 4; i++)
     PyList_SetItem(id_list, i, PyLong_FromLong(msg.gauge_ids[i]));
   DictSafeSetItem(dict, "gauge_ids", id_list);
+  Py_DECREF(id_list);
 
   PyObject *level_list = PyList_New(4);
   for (size_t i = 0; i < 4; i++)
     PyList_SetItem(level_list, i, PyFloat_FromDouble(msg.levels[i]));
   DictSafeSetItem(dict, "levels", level_list);
+  Py_DECREF(level_list);
 
   return AIS_OK;
 }
@@ -1855,6 +1862,7 @@ ais8_200_55_append_pydict(const char *nmea_payload, PyObject *dict,
   for (size_t i = 0; i < 3; i++)
     PyList_SetItem(spare2_list, 0,  PyLong_FromLong(msg.spare2[i]));
   DictSafeSetItem(dict, "spare2", spare2_list);
+  Py_DECREF(spare2_list);
 
   return AIS_OK;
 }
@@ -1887,7 +1895,8 @@ ais8_367_22_append_pydict(const char *nmea_payload, PyObject *dict,
       {
         PyObject *sub_area = PyDict_New();
         Ais8_367_22_Circle *c =
-            reinterpret_cast<Ais8_367_22_Circle*>(msg.sub_areas[i]);
+            dynamic_cast<Ais8_367_22_Circle*>(msg.sub_areas[i].get());
+        assert(c != nullptr);
 
         DictSafeSetItem(sub_area, "sub_area_type", AIS8_366_22_SHAPE_CIRCLE);
         if (c->radius_m == 0)
@@ -1905,7 +1914,8 @@ ais8_367_22_append_pydict(const char *nmea_payload, PyObject *dict,
       {
         PyObject *sub_area = PyDict_New();
         Ais8_367_22_Rect *c =
-            reinterpret_cast<Ais8_367_22_Rect*>(msg.sub_areas[i]);
+            dynamic_cast<Ais8_367_22_Rect*>(msg.sub_areas[i].get());
+        assert(c != nullptr);
 
         DictSafeSetItem(sub_area, "sub_area_type", AIS8_366_22_SHAPE_RECT);
         DictSafeSetItem(sub_area, "sub_area_type_str", "rect");
@@ -1923,7 +1933,8 @@ ais8_367_22_append_pydict(const char *nmea_payload, PyObject *dict,
       {
         PyObject *sub_area = PyDict_New();
         Ais8_367_22_Sector *c =
-            reinterpret_cast<Ais8_367_22_Sector*>(msg.sub_areas[i]);
+            dynamic_cast<Ais8_367_22_Sector*>(msg.sub_areas[i].get());
+        assert(c != nullptr);
 
         DictSafeSetItem(sub_area, "sub_area_type", AIS8_366_22_SHAPE_SECTOR);
         DictSafeSetItem(sub_area, "sub_area_type_str", "sector");
@@ -1942,7 +1953,8 @@ ais8_367_22_append_pydict(const char *nmea_payload, PyObject *dict,
       {
         PyObject *sub_area = PyDict_New();
         Ais8_367_22_Poly *poly =
-            reinterpret_cast<Ais8_367_22_Poly*>(msg.sub_areas[i]);
+            dynamic_cast<Ais8_367_22_Poly*>(msg.sub_areas[i].get());
+        assert(poly != nullptr);
 
         DictSafeSetItem(sub_area, "sub_area_type", msg.sub_areas[i]->getType());
         if (msg.sub_areas[i]->getType() == AIS8_366_22_SHAPE_POLYLINE)
@@ -1962,6 +1974,8 @@ ais8_367_22_append_pydict(const char *nmea_payload, PyObject *dict,
 
         DictSafeSetItem(sub_area, "angles", angle_list);
         DictSafeSetItem(sub_area, "dists_m", dist_list);
+        Py_DECREF(angle_list);
+        Py_DECREF(dist_list);
 
         PyList_SetItem(sub_area_list, i, sub_area);
       }
@@ -1971,7 +1985,9 @@ ais8_367_22_append_pydict(const char *nmea_payload, PyObject *dict,
         PyObject *sub_area = PyDict_New();
 
         Ais8_367_22_Text *text =
-            reinterpret_cast<Ais8_367_22_Text*>(msg.sub_areas[i]);
+            dynamic_cast<Ais8_367_22_Text*>(msg.sub_areas[i].get());
+        assert(text != nullptr);
+
         DictSafeSetItem(sub_area, "sub_area_type", AIS8_366_22_SHAPE_TEXT);
         DictSafeSetItem(sub_area, "sub_area_type_str", "text");
 
@@ -1986,6 +2002,759 @@ ais8_367_22_append_pydict(const char *nmea_payload, PyObject *dict,
     }
   }
   DictSafeSetItem(dict, "sub_areas", sub_area_list);
+  Py_DECREF(sub_area_list);
+}
+
+AIS_STATUS
+ais8_367_23_append_pydict(const char *nmea_payload, PyObject *dict,
+                          const size_t pad) {
+  assert(nmea_payload);
+  assert(dict);
+  assert(pad < 6);
+  Ais8_367_23 msg(nmea_payload, pad);
+  if (msg.had_error()) {
+    return msg.get_error();
+  }
+
+  DictSafeSetItem(dict, "version", msg.version);
+
+  if (msg.utc_day != 0) {
+    DictSafeSetItem(dict, "utc_day", msg.utc_day);
+  } else {
+    DictSafeSetItem(dict, "utc_day", Py_None);
+  }
+
+  if (msg.utc_hour <= 23) {
+    DictSafeSetItem(dict, "utc_hour", msg.utc_hour);
+  } else {
+    DictSafeSetItem(dict, "utc_hour", Py_None);
+  }
+
+  if (msg.utc_min <= 59) {
+    DictSafeSetItem(dict, "utc_min", msg.utc_min);
+  } else {
+    DictSafeSetItem(dict, "utc_min", Py_None);
+  }
+
+  DictSafeSetItem(dict, "x", "y", msg.position);
+
+  if (msg.pressure <= (402 + 799)) {
+    DictSafeSetItem(dict, "pressure", msg.pressure);
+  } else {
+    // Raw value was 403 (N/A), or reserved value.
+    DictSafeSetItem(dict, "pressure", Py_None);
+  }
+
+  if (msg.air_temp_raw >= -600 && msg.air_temp_raw <= 600) {
+    DictSafeSetItem(dict, "air_temp", msg.air_temp);
+  } else {
+    DictSafeSetItem(dict, "air_temp", Py_None);
+  }
+
+  if (msg.wind_speed <= 121) {
+    DictSafeSetItem(dict, "wind_speed", msg.wind_speed);
+  } else {
+    // Raw value was 122 (N/A) or reserved value.
+    DictSafeSetItem(dict, "wind_speed", Py_None);
+  }
+
+  if (msg.wind_gust <= 121) {
+    DictSafeSetItem(dict, "wind_gust", msg.wind_gust);
+  } else {
+    // Raw value was 122 (N/A) or reserved value.
+    DictSafeSetItem(dict, "wind_gust", Py_None);
+  }
+
+  if (msg.wind_dir <= 359) {
+    DictSafeSetItem(dict, "wind_dir", msg.wind_dir);
+  } else {
+    // Raw value was 360 (N/A), or reserved value.
+    DictSafeSetItem(dict, "wind_dir", Py_None);
+  }
+
+  return AIS_OK;
+}
+
+AIS_STATUS
+ais8_367_24_append_pydict(const char *nmea_payload, PyObject *dict,
+                        const size_t pad) {
+  assert(nmea_payload);
+  assert(dict);
+  assert(pad < 6);
+  Ais8_367_24 msg(nmea_payload, pad);
+  if (msg.had_error()) {
+    return msg.get_error();
+  }
+
+  DictSafeSetItem(dict, "version", msg.version);
+
+  if (msg.utc_hour <= 23) {
+    DictSafeSetItem(dict, "utc_hour", msg.utc_hour);
+  } else {
+    DictSafeSetItem(dict, "utc_hour", Py_None);
+  }
+
+  if (msg.utc_min <= 59) {
+    DictSafeSetItem(dict, "utc_min", msg.utc_min);
+  } else {
+    DictSafeSetItem(dict, "utc_min", Py_None);
+  }
+
+  DictSafeSetItem(dict, "x", "y", msg.position);
+
+  if (msg.pressure <= (403 + 799)) {
+    DictSafeSetItem(dict, "pressure", msg.pressure);
+  } else {
+    // Raw value was 403 (N/A), or reserved value.
+    DictSafeSetItem(dict, "pressure", Py_None);
+  }
+
+  return AIS_OK;
+}
+
+AIS_STATUS
+ais8_367_25_append_pydict(const char *nmea_payload, PyObject *dict,
+                        const size_t pad) {
+  assert(nmea_payload);
+  assert(dict);
+  assert(pad < 6);
+  Ais8_367_25 msg(nmea_payload, pad);
+  if (msg.had_error()) {
+    return msg.get_error();
+  }
+
+  DictSafeSetItem(dict, "version", msg.version);
+
+  if (msg.utc_hour <= 23) {
+    DictSafeSetItem(dict, "utc_hour", msg.utc_hour);
+  } else {
+    DictSafeSetItem(dict, "utc_hour", Py_None);
+  }
+
+  if (msg.utc_min <= 59) {
+    DictSafeSetItem(dict, "utc_min", msg.utc_min);
+  } else {
+    DictSafeSetItem(dict, "utc_min", Py_None);
+  }
+
+  if (msg.pressure <= (799 + 402)) {
+    DictSafeSetItem(dict, "pressure", msg.pressure);
+  } else {
+    // Raw value was 403 (N/A), or reserved value.
+    DictSafeSetItem(dict, "pressure", Py_None);
+  }
+
+  if (msg.wind_speed <= 121) {
+    DictSafeSetItem(dict, "wind_speed", msg.wind_speed);
+  } else {
+    // Raw value was 122 (N/A) or reserved value.
+    DictSafeSetItem(dict, "wind_speed", Py_None);
+  }
+
+  if (msg.wind_dir <= 359) {
+    DictSafeSetItem(dict, "wind_dir", msg.wind_dir);
+  } else {
+    // Raw value was 360 (N/A), or reserved value.
+    DictSafeSetItem(dict, "wind_dir", Py_None);
+  }
+
+  return AIS_OK;
+}
+
+AIS_STATUS
+ais8_367_33_append_pydict_sensor_hdr(PyObject *dict,
+                                     Ais8_367_33_SensorReport* rpt) {
+  assert(dict);
+  assert(rpt);
+  DictSafeSetItem(dict, "report_type", rpt->report_type);
+
+  if (rpt->utc_day != 0) {
+    DictSafeSetItem(dict, "utc_day", rpt->utc_day);
+  } else {
+    DictSafeSetItem(dict, "utc_day", Py_None);
+  }
+
+  if (rpt->utc_hr <= 23) {
+    DictSafeSetItem(dict, "utc_hr", rpt->utc_hr);
+  } else {
+    DictSafeSetItem(dict, "utc_hr", Py_None);
+  }
+
+  if (rpt->utc_min <= 59) {
+    DictSafeSetItem(dict, "utc_min", rpt->utc_min);
+  } else {
+    DictSafeSetItem(dict, "utc_min", Py_None);
+  }
+
+  DictSafeSetItem(dict, "site_id", rpt->site_id);
+
+  return AIS_OK;
+}
+
+AIS_STATUS
+ais8_367_33_append_pydict(const char *nmea_payload, PyObject *dict,
+                          const size_t pad) {
+  assert(nmea_payload);
+  assert(dict);
+  assert(pad < 6);
+  Ais8_367_33 msg(nmea_payload, pad);
+  if (msg.had_error()) {
+    return msg.get_error();
+  }
+
+  PyObject *rpt_list = PyList_New(msg.reports.size());
+  DictSafeSetItem(dict, "reports", rpt_list);
+
+  for (size_t rpt_num = 0; rpt_num < msg.reports.size(); rpt_num++) {
+    PyObject *rpt_dict = PyDict_New();
+    PyList_SetItem(rpt_list, rpt_num, rpt_dict);
+
+    switch (msg.reports[rpt_num]->report_type) {
+      // case AIS8_367_33_SENSOR_ERROR:
+    case AIS8_367_33_SENSOR_LOCATION:
+      {
+        Ais8_367_33_Location *rpt =
+            dynamic_cast<Ais8_367_33_Location *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+
+        DictSafeSetItem(rpt_dict, "x", "y", rpt->position);
+
+        if (rpt->altitude_raw >= -2000 && rpt->altitude_raw <= 2001) {
+          DictSafeSetItem(rpt_dict, "altitude", rpt->altitude);
+        } else {
+          DictSafeSetItem(rpt_dict, "altitude", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "owner", rpt->owner);
+        DictSafeSetItem(rpt_dict, "timeout", rpt->timeout);
+        DictSafeSetItem(rpt_dict, "spare2", rpt->spare2);
+      }
+      break;
+    case AIS8_367_33_SENSOR_STATION:
+      {
+        Ais8_367_33_Station *rpt =
+            dynamic_cast<Ais8_367_33_Station *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+
+        DictSafeSetItem(rpt_dict, "name", rpt->name);
+        DictSafeSetItem(rpt_dict, "spare2", rpt->spare2);
+      }
+      break;
+    case AIS8_367_33_SENSOR_WIND:
+      {
+        Ais8_367_33_Wind *rpt =
+            dynamic_cast<Ais8_367_33_Wind *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+
+        if (rpt->wind_speed >= 0 && rpt->wind_speed <= 121) {
+          DictSafeSetItem(rpt_dict, "wind_speed", rpt->wind_speed);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_speed", Py_None);
+        }
+
+        if (rpt->wind_gust >= 0 && rpt->wind_gust <= 121) {
+          DictSafeSetItem(rpt_dict, "wind_gust", rpt->wind_gust);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_gust", Py_None);
+        }
+
+        if (rpt->wind_dir >= 0 && rpt->wind_dir <= 359) {
+          DictSafeSetItem(rpt_dict, "wind_dir", rpt->wind_dir);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_dir", Py_None);
+        }
+
+        if (rpt->wind_gust_dir >= 0 && rpt->wind_gust_dir <= 359) {
+          DictSafeSetItem(rpt_dict, "wind_gust_dir", rpt->wind_gust_dir);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_gust_dir", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "sensor_type", rpt->sensor_type);
+
+        if (rpt->wind_forecast >= 0 && rpt->wind_forecast <= 121) {
+          DictSafeSetItem(rpt_dict, "wind_forecast", rpt->wind_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_forecast", Py_None);
+        }
+
+        if (rpt->wind_gust_forecast >= 0 && rpt->wind_gust_forecast <= 121) {
+          DictSafeSetItem(rpt_dict, "wind_gust_forecast", rpt->wind_gust_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_gust_forecast", Py_None);
+        }
+
+        if (rpt->wind_dir_forecast >= 0 && rpt->wind_dir_forecast <= 359) {
+          DictSafeSetItem(rpt_dict, "wind_dir_forecast", rpt->wind_dir_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_dir_forecast", Py_None);
+        }
+
+        if (rpt->utc_day_forecast != 0) {
+          DictSafeSetItem(rpt_dict, "utc_day_forecast", rpt->utc_day_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "utc_day_forecast", Py_None);
+        }
+
+        if (rpt->utc_hour_forecast >= 0 && rpt->utc_hour_forecast <= 23) {
+          DictSafeSetItem(rpt_dict, "utc_hour_forecast", rpt->utc_hour_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "utc_hour_forecast", Py_None);
+        }
+
+        if (rpt->utc_min_forecast >= 0 && rpt->utc_min_forecast <= 59) {
+          DictSafeSetItem(rpt_dict, "utc_min_forecast", rpt->utc_min_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "utc_min_forecast", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "duration", rpt->duration);
+        DictSafeSetItem(rpt_dict, "spare2", rpt->spare2);
+      }
+      break;
+    case AIS8_367_33_SENSOR_WATER_LEVEL:
+      {
+        Ais8_367_33_WaterLevel *rpt =
+            dynamic_cast<Ais8_367_33_WaterLevel *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+        DictSafeSetItem(rpt_dict, "type", rpt->type);
+
+        if (rpt->level != 32768) {
+          DictSafeSetItem(rpt_dict, "level", rpt->level);
+        } else {
+          DictSafeSetItem(rpt_dict, "level", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "trend", rpt->trend);
+        DictSafeSetItem(rpt_dict, "vdatum", rpt->vdatum);
+        DictSafeSetItem(rpt_dict, "sensor_type", rpt->sensor_type);
+        DictSafeSetItem(rpt_dict, "forecast_type", rpt->forecast_type);
+
+        if (rpt->level_forecast != 32768) {
+          DictSafeSetItem(rpt_dict, "level_forecast", rpt->level_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "level_forecast", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "utc_day_forecast", rpt->utc_day_forecast);
+        DictSafeSetItem(rpt_dict, "utc_hour_forecast", rpt->utc_hour_forecast);
+        DictSafeSetItem(rpt_dict, "utc_min_forecast", rpt->utc_min_forecast);
+        DictSafeSetItem(rpt_dict, "duration", rpt->duration);
+        DictSafeSetItem(rpt_dict, "spare2", rpt->spare2);
+      }
+      break;
+    case AIS8_367_33_SENSOR_CURR_2D:
+      {
+        Ais8_367_33_Curr2D *rpt =
+            dynamic_cast<Ais8_367_33_Curr2D *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+        DictSafeSetItem(rpt_dict, "type", rpt->type);
+        DictSafeSetItem(rpt_dict, "spare2", rpt->spare2);
+
+        PyObject *curr_list = PyList_New(3);
+        DictSafeSetItem(rpt_dict, "currents", curr_list);
+        for (size_t idx = 0; idx < 3; idx++) {
+          PyObject *curr_dict = PyDict_New();
+
+          if (rpt->currents[idx].speed_raw <= 246) {
+            DictSafeSetItem(curr_dict, "speed", rpt->currents[idx].speed);
+          } else {
+            DictSafeSetItem(curr_dict, "speed", Py_None);
+          }
+
+          if (rpt->currents[idx].dir <= 359) {
+            DictSafeSetItem(curr_dict, "dir", rpt->currents[idx].dir);
+          } else {
+            DictSafeSetItem(curr_dict, "dir", Py_None);
+          }
+
+          if (rpt->currents[idx].depth <= 361) {
+            DictSafeSetItem(curr_dict, "depth", rpt->currents[idx].depth);
+          } else {
+            DictSafeSetItem(curr_dict, "depth", Py_None);
+          }
+
+          PyList_SetItem(curr_list, idx, curr_dict);
+        }
+      }
+      break;
+    case AIS8_367_33_SENSOR_CURR_3D:
+      {
+        Ais8_367_33_Curr3D *rpt =
+            dynamic_cast<Ais8_367_33_Curr3D *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+        DictSafeSetItem(rpt_dict, "type", rpt->type);
+        DictSafeSetItem(rpt_dict, "spare2", rpt->spare2);
+
+        PyObject *curr_list = PyList_New(2);
+        DictSafeSetItem(rpt_dict, "currents", curr_list);
+        for (size_t idx = 0; idx < 2; idx++) {
+          PyObject *curr_dict = PyDict_New();
+          PyList_SetItem(curr_list, idx, curr_dict);
+
+          if (rpt->currents[idx].north_raw >= -251 && rpt->currents[idx].north_raw <= 251) {
+            DictSafeSetItem(curr_dict, "north", rpt->currents[idx].north);
+          } else {
+            DictSafeSetItem(curr_dict, "north", Py_None);
+          }
+
+          if (rpt->currents[idx].east_raw >= -251 && rpt->currents[idx].east_raw <= 251) {
+            DictSafeSetItem(curr_dict, "east", rpt->currents[idx].east);
+          } else {
+            DictSafeSetItem(curr_dict, "east", Py_None);
+          }
+
+          if (rpt->currents[idx].up_raw >= -251 && rpt->currents[idx].up_raw <= 251) {
+            DictSafeSetItem(curr_dict, "up", rpt->currents[idx].up);
+          } else {
+            DictSafeSetItem(curr_dict, "up", Py_None);
+          }
+
+          if (rpt->currents[idx].depth >= 0 && rpt->currents[idx].depth <= 361) {
+            DictSafeSetItem(curr_dict, "depth", rpt->currents[idx].depth);
+          } else {
+            DictSafeSetItem(curr_dict, "depth", Py_None);
+          }
+        }
+      }
+      break;
+    case AIS8_367_33_SENSOR_HORZ_FLOW:
+      {
+        Ais8_367_33_HorzFlow *rpt =
+            dynamic_cast<Ais8_367_33_HorzFlow *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+        DictSafeSetItem(rpt_dict, "spare2", rpt->spare2);
+
+        if (rpt->bearing <= 359) {
+          DictSafeSetItem(rpt_dict, "bearing", rpt->bearing);
+        } else {
+            DictSafeSetItem(rpt_dict, "bearing", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "type", rpt->type);
+
+        PyObject *curr_list = PyList_New(2);
+        DictSafeSetItem(rpt_dict, "currents", curr_list);
+        for (size_t idx = 0; idx < 2; idx++) {
+          PyObject *curr_dict = PyDict_New();
+
+          if (rpt->currents[idx].dist <= 361) {
+            DictSafeSetItem(curr_dict, "dist", rpt->currents[idx].dist);
+           } else {
+            DictSafeSetItem(curr_dict, "dist", Py_None);
+          }
+
+          if (rpt->currents[idx].speed_raw <= 246) {
+            DictSafeSetItem(curr_dict, "speed", rpt->currents[idx].speed);
+           } else {
+            DictSafeSetItem(curr_dict, "speed", Py_None);
+          }
+
+          if (rpt->currents[idx].dir <= 359) {
+            DictSafeSetItem(curr_dict, "dir", rpt->currents[idx].dir);
+           } else {
+            DictSafeSetItem(curr_dict, "dir", Py_None);
+          }
+
+          if (rpt->currents[idx].level <= 361) {
+            DictSafeSetItem(curr_dict, "level", rpt->currents[idx].level);
+           } else {
+            DictSafeSetItem(curr_dict, "level", Py_None);
+          }
+
+          PyList_SetItem(curr_list, idx, curr_dict);
+        }
+      }
+      break;
+    case AIS8_367_33_SENSOR_SEA_STATE:
+      {
+        Ais8_367_33_SeaState *rpt =
+            dynamic_cast<Ais8_367_33_SeaState *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+
+        if (rpt->swell_height_raw <= 246) {
+          DictSafeSetItem(rpt_dict, "swell_height", rpt->swell_height);
+        } else {
+          DictSafeSetItem(rpt_dict, "swell_height", Py_None);
+        }
+
+        if (rpt->swell_period <= 60) {
+          DictSafeSetItem(rpt_dict, "swell_period", rpt->swell_period);
+        } else {
+          DictSafeSetItem(rpt_dict, "swell_period", Py_None);
+        }
+
+        if (rpt->swell_dir <= 359) {
+          DictSafeSetItem(rpt_dict, "swell_dir", rpt->swell_dir);
+        } else {
+          DictSafeSetItem(rpt_dict, "swell_dir", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "sea_state", rpt->sea_state);
+        DictSafeSetItem(rpt_dict, "swell_sensor_type", rpt->swell_sensor_type);
+
+        if (rpt->water_temp_raw <= 600) {
+          DictSafeSetItem(rpt_dict, "water_temp", rpt->water_temp);
+        } else {
+          DictSafeSetItem(rpt_dict, "water_temp", Py_None);
+        }
+
+        if (rpt->water_temp_depth_raw <= 121) {
+          DictSafeSetItem(rpt_dict, "water_temp_depth", rpt->water_temp_depth);
+        } else {
+          DictSafeSetItem(rpt_dict, "water_temp_depth", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "water_sensor_type", rpt->water_sensor_type);
+
+        if (rpt->wave_height_raw <= 246) {
+          DictSafeSetItem(rpt_dict, "wave_height", rpt->wave_height);
+        } else {
+          DictSafeSetItem(rpt_dict, "wave_height", Py_None);
+        }
+
+        if (rpt->wave_period <= 60) {
+          DictSafeSetItem(rpt_dict, "wave_period", rpt->wave_period);
+        } else {
+          DictSafeSetItem(rpt_dict, "wave_period", Py_None);
+        }
+
+        if (rpt->wave_dir <= 359) {
+          DictSafeSetItem(rpt_dict, "wave_dir", rpt->wave_dir);
+        } else {
+          DictSafeSetItem(rpt_dict, "wave_dir", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "wave_sensor_type", rpt->wave_sensor_type);
+
+        if (rpt->salinity_raw <= 501) {
+          DictSafeSetItem(rpt_dict, "salinity", rpt->salinity);
+        } else {
+          DictSafeSetItem(rpt_dict, "salinity", Py_None);
+        }
+
+      }
+      break;
+    case AIS8_367_33_SENSOR_SALINITY:
+      {
+        Ais8_367_33_Salinity *rpt =
+            dynamic_cast<Ais8_367_33_Salinity *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+
+        if (rpt->water_temp_raw <= 600) {
+          DictSafeSetItem(rpt_dict, "water_temp", rpt->water_temp);
+        } else {
+          DictSafeSetItem(rpt_dict, "water_temp", Py_None);
+        }
+
+        if (rpt->conductivity_raw <= 701) {
+          DictSafeSetItem(rpt_dict, "conductivity", rpt->conductivity);
+        } else {
+          DictSafeSetItem(rpt_dict, "conductivity", Py_None);
+        }
+
+        if (rpt->pressure_raw <= 60001) {
+          DictSafeSetItem(rpt_dict, "pressure", rpt->pressure);
+        } else {
+          DictSafeSetItem(rpt_dict, "pressure", Py_None);
+        }
+
+        if (rpt->salinity_raw <= 501) {
+          DictSafeSetItem(rpt_dict, "salinity", rpt->salinity);
+        } else {
+          DictSafeSetItem(rpt_dict, "salinity", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "salinity_type", rpt->salinity_type);
+        DictSafeSetItem(rpt_dict, "sensor_type", rpt->sensor_type);
+        DictSafeSetItem(rpt_dict, "spare0", rpt->spare2[0]);
+        DictSafeSetItem(rpt_dict, "spare1", rpt->spare2[1]);
+      }
+      break;
+    case AIS8_367_33_SENSOR_WX:
+      {
+        Ais8_367_33_Wx *rpt =
+            dynamic_cast<Ais8_367_33_Wx *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+
+        if (rpt->air_temp_raw >= -600 && rpt->air_temp_raw <= 600) {
+          DictSafeSetItem(rpt_dict, "air_temp", rpt->air_temp);
+        } else {
+          DictSafeSetItem(rpt_dict, "air_temp", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "air_temp_sensor_type",
+                        rpt->air_temp_sensor_type);
+        DictSafeSetItem(rpt_dict, "precip", rpt->precip);
+
+        if (rpt->horz_vis_raw <= 241) {
+          DictSafeSetItem(rpt_dict, "horz_vis", rpt->horz_vis);
+        } else {
+          DictSafeSetItem(rpt_dict, "horz_vis", Py_None);
+        }
+
+        // Not sure how to map 702 and 703 to Python.
+        if (rpt->dew_point_raw <= 700) {
+          DictSafeSetItem(rpt_dict, "dew_point", rpt->dew_point);
+        } else {
+          DictSafeSetItem(rpt_dict, "dew_point", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "dew_point_type", rpt->dew_point_type);
+
+        if (rpt->air_pressure_raw <= 402) {
+          DictSafeSetItem(rpt_dict, "air_pressure", rpt->air_pressure);
+        } else {
+          DictSafeSetItem(rpt_dict, "air_pressure", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "air_pressure_trend",
+                        rpt->air_pressure_trend);
+        DictSafeSetItem(rpt_dict, "air_pressure_sensor_type", rpt->air_pressure_sensor_type);
+
+        if (rpt->salinity_raw <= 501) {
+          DictSafeSetItem(rpt_dict, "salinity", rpt->salinity);
+        } else {
+          DictSafeSetItem(rpt_dict, "salinity", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "spare2", rpt->spare2);
+      }
+      break;
+    case AIS8_367_33_SENSOR_AIR_GAP:
+      {
+        Ais8_367_33_AirGap *rpt =
+            dynamic_cast<Ais8_367_33_AirGap *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+
+        if (rpt->air_draught != 0) {
+          DictSafeSetItem(rpt_dict, "air_draught", rpt->air_draught);
+        } else {
+          DictSafeSetItem(rpt_dict, "air_draught", Py_None);
+        }
+
+        if (rpt->air_gap != 0) {
+          DictSafeSetItem(rpt_dict, "air_gap", rpt->air_gap);
+        } else {
+          DictSafeSetItem(rpt_dict, "air_gap", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "air_gap_trend", rpt->air_gap_trend);
+
+        if (rpt->predicted_air_gap != 0) {
+          DictSafeSetItem(rpt_dict, "predicted_air_gap", rpt->predicted_air_gap);
+        } else {
+          DictSafeSetItem(rpt_dict, "predicted_air_gap", Py_None);
+        }
+
+        if (rpt->utc_day_forecast != 0) {
+          DictSafeSetItem(rpt_dict, "utc_day_forecast", rpt->utc_day_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "utc_day_forecast", Py_None);
+        }
+
+        if (rpt->utc_hour_forecast <= 23) {
+          DictSafeSetItem(rpt_dict, "utc_hour_forecast", rpt->utc_hour_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "utc_hour_forecast", Py_None);
+        }
+
+        if (rpt->utc_min_forecast <= 59) {
+          DictSafeSetItem(rpt_dict, "utc_min_forecast", rpt->utc_min_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "utc_min_forecast", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "spare2", rpt->spare2);
+      }
+      break;
+    case AIS8_367_33_SENSOR_WIND_REPORT_2:
+      {
+        Ais8_367_33_Wind_V2 *rpt =
+            dynamic_cast<Ais8_367_33_Wind_V2 *>(msg.reports[rpt_num].get());
+        assert(rpt != nullptr);
+        ais8_367_33_append_pydict_sensor_hdr(rpt_dict, rpt);
+
+        if (rpt->wind_speed <= 121) {
+          DictSafeSetItem(rpt_dict, "wind_speed", rpt->wind_speed);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_speed", Py_None);
+        }
+
+        if (rpt->wind_gust <= 121) {
+          DictSafeSetItem(rpt_dict, "wind_gust", rpt->wind_gust);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_gust", Py_None);
+        }
+
+        if (rpt->wind_dir <= 359) {
+          DictSafeSetItem(rpt_dict, "wind_dir", rpt->wind_dir);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_dir", Py_None);
+        }
+
+        if (rpt->averaging_time >= 1 && rpt->averaging_time <= 61) {
+          DictSafeSetItem(rpt_dict, "averaging_time", rpt->averaging_time);
+        } else {
+          DictSafeSetItem(rpt_dict, "averaging_time", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "sensor_type", rpt->sensor_type);
+
+        if (rpt->wind_speed_forecast <= 121) {
+          DictSafeSetItem(rpt_dict, "wind_speed_forecast", rpt->wind_speed_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_speed_forecast", Py_None);
+        }
+
+        if (rpt->wind_gust_forecast <= 121) {
+          DictSafeSetItem(rpt_dict, "wind_gust_forecast", rpt->wind_gust_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_gust_forecast", Py_None);
+        }
+
+        if (rpt->wind_dir_forecast <= 359) {
+          DictSafeSetItem(rpt_dict, "wind_dir_forecast", rpt->wind_dir_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "wind_dir_forecast", Py_None);
+        }
+
+        if (rpt->utc_hour_forecast <= 23) {
+          DictSafeSetItem(rpt_dict, "utc_hour_forecast", rpt->utc_hour_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "utc_hour_forecast", Py_None);
+        }
+
+        if (rpt->utc_min_forecast <= 59) {
+          DictSafeSetItem(rpt_dict, "utc_min_forecast", rpt->utc_min_forecast);
+        } else {
+          DictSafeSetItem(rpt_dict, "utc_min_forecast", Py_None);
+        }
+
+        DictSafeSetItem(rpt_dict, "duration", rpt->duration);
+        DictSafeSetItem(rpt_dict, "spare2", rpt->spare2);
+      }
+      break;
+    case AIS8_367_33_SENSOR_RESERVED_12:
+    case AIS8_367_33_SENSOR_RESERVED_13:
+    case AIS8_367_33_SENSOR_RESERVED_14:
+    case AIS8_367_33_SENSOR_RESERVED_15:
+    default:
+      {}  // TODO(schwehr): mark a bad sensor type or raise exception
+    }
+  }
+  return AIS_OK;
 }
 
 // AIS Binary broadcast messages.  There will be a huge number of subtypes
@@ -2106,6 +2875,18 @@ ais8_to_pydict(const char *nmea_payload, const size_t pad) {
     case 22:  // USCG Area Notice 2012 (v5?).
       ais8_367_22_append_pydict(nmea_payload, dict, pad);
       break;
+    case AIS_FI_8_367_23_SSW:
+      status = ais8_367_23_append_pydict(nmea_payload, dict, pad);
+      break;
+    case AIS_FI_8_367_24_SSW_SMALL:
+      status = ais8_367_24_append_pydict(nmea_payload, dict, pad);
+      break;
+    case AIS_FI_8_367_25_SSW_TINY:
+      status = ais8_367_25_append_pydict(nmea_payload, dict, pad);
+      break;
+    case AIS_FI_8_367_33_ENVIRONMENTAL:
+      status = ais8_367_33_append_pydict(nmea_payload, dict, pad);
+      break;
     default:
       DictSafeSetItem(dict, "parsed", false);
       break;
@@ -2117,6 +2898,7 @@ ais8_to_pydict(const char *nmea_payload, const size_t pad) {
   }
 
   if (status != AIS_OK) {
+    Py_DECREF(dict);
     PyErr_Format(ais_py_exception, "Ais8: %s",
                  AIS_STATUS_STRINGS[status]);
     return nullptr;
@@ -2493,9 +3275,7 @@ ais20_to_pydict(const char *nmea_payload, const size_t pad) {
     PyList_SetItem(list, 3, reservation);
   }
 
-  PyObject * reservations = PyUnicode_FromString("reservations");
-  PyDict_SetItem(dict, reservations, list);
-  Py_DECREF(reservations);
+  PyDict_SetItemString(dict, "reservations", list);
   Py_DECREF(list);
 
   return dict;
@@ -2535,7 +3315,7 @@ ais21_to_pydict(const char *nmea_payload, const size_t pad) {
   return dict;
 }
 
-// 22 - 'F' - Channel mangement
+// 22 - 'F' - Channel management
 PyObject*
 ais22_to_pydict(const char *nmea_payload, const size_t pad) {
   assert(nmea_payload);
@@ -2633,7 +3413,9 @@ ais24_to_pydict(const char *nmea_payload, const size_t pad) {
   case 3:  // FALLTHROUGH - not yet defined by ITU
   default:
     // status = AIS_ERR_BAD_MSG_CONTENT;
-    // TODO(schwehr): setup python exception
+    Py_DECREF(dict);
+    PyErr_Format(ais_py_exception, "Ais24: unknown part_num %d",
+                 msg.part_num);
     return nullptr;
   }
 
@@ -2848,8 +3630,6 @@ static PyMethodDef ais_methods[] = {
 
 // Python module initialization
 
-#if PY_MAJOR_VERSION >= 3
-
 static struct PyModuleDef aismodule = {
   PyModuleDef_HEAD_INIT,
   "_ais",  // Module name.
@@ -2869,23 +3649,6 @@ PyMODINIT_FUNC PyInit__ais(void) {
   PyModule_AddObject(module, exception_short, ais_py_exception);
   return module;
 }
-
-#else  // Python 2.7
-
-void init_ais(void) {
-  PyObject *module = Py_InitModule("_ais", ais_methods);
-
-  if (module == nullptr) {
-    return;
-  }
-
-  ais_py_exception = PyErr_NewException(
-      const_cast<char *>(exception_name), nullptr, nullptr);
-  Py_INCREF(ais_py_exception);
-  PyModule_AddObject(module, exception_short, ais_py_exception);
-}
-
-#endif  // PY_MAJOR_VERSION
 
 }  // extern "C"
 
